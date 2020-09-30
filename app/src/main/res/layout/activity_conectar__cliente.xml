@@ -201,9 +201,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
         android:text="Desconhecido"
-        app:layout_constraintTop_toBottomOf="@+id/btVerif"
-        tools:layout_editor_absoluteX="125dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView26"
+        app:layout_constraintTop_toBottomOf="@+id/btVerif" />
 
     <TextView
         android:id="@+id/textPont2"
@@ -211,8 +213,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="0"
-        app:layout_constraintTop_toBottomOf="@+id/textStatus2"
-        tools:layout_editor_absoluteX="124dp" />
+        app:layout_constraintStart_toStartOf="@+id/textStatus2"
+        app:layout_constraintTop_toBottomOf="@+id/textStatus2" />
 
     <TextView
         android:id="@+id/textTenta2"
@@ -220,6 +222,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="0"
-        app:layout_constraintTop_toBottomOf="@+id/textPont2"
-        tools:layout_editor_absoluteX="124dp" />
+        app:layout_constraintStart_toStartOf="@+id/textPont2"
+        app:layout_constraintTop_toBottomOf="@+id/textPont2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

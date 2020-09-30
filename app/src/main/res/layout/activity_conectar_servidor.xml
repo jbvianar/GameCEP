@@ -14,7 +14,7 @@
         android:layout_marginStart="44dp"
         android:layout_marginTop="16dp"
         android:text="Tentativas:"
-        android:textSize="14sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView17" />
 
@@ -25,7 +25,7 @@
         android:layout_marginStart="44dp"
         android:layout_marginTop="16dp"
         android:text="Pontuação:"
-        android:textSize="14sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
@@ -36,7 +36,7 @@
         android:layout_marginStart="44dp"
         android:layout_marginTop="8dp"
         android:text="Cidade:"
-        android:textSize="14sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
@@ -47,7 +47,7 @@
         android:layout_marginStart="44dp"
         android:layout_marginTop="8dp"
         android:text="Logradouro:"
-        android:textSize="14sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
@@ -58,7 +58,7 @@
         android:layout_marginStart="44dp"
         android:layout_marginTop="16dp"
         android:text="Status:"
-        android:textSize="14sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btVerif" />
 
@@ -73,7 +73,7 @@
         android:gravity="center_horizontal"
         android:text="Desconectado"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="18sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView4"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
@@ -85,7 +85,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
         android:text="Status:"
-        android:textSize="18sp"
+        android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
@@ -99,7 +99,7 @@
         android:fontFamily="@font/englebert"
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="18sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView5"
         app:layout_constraintTop_toBottomOf="@+id/textStatus" />
@@ -111,7 +111,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:text="IP:"
-        android:textSize="18sp"
+        android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
@@ -168,6 +168,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="20dp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView15"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
@@ -178,6 +179,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="48dp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.464"
         app:layout_constraintStart_toEndOf="@+id/textView14"
@@ -203,6 +205,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:text="Desconhacido"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView16"
         app:layout_constraintTop_toBottomOf="@+id/btVerif" />
@@ -213,6 +216,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="0"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/textStatus1"
         app:layout_constraintTop_toBottomOf="@+id/textStatus1" />
 
@@ -222,6 +226,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="0"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/textPont1"
         app:layout_constraintTop_toBottomOf="@+id/textPont1" />
 </androidx.constraintlayout.widget.ConstraintLayout>
