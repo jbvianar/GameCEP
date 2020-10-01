@@ -8,6 +8,17 @@
     tools:context=".ConectarServidor">
 
     <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="8dp"
+        android:text="CEP:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btConectaServer" />
+
+    <TextView
         android:id="@+id/textView18"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,7 +49,7 @@
         android:text="Cidade:"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <TextView
         android:id="@+id/textView14"
@@ -56,11 +67,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="44dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Status:"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btVerif" />
+        app:layout_constraintTop_toBottomOf="@+id/edtCepInicio" />
 
     <TextView
         android:id="@+id/textStatus"
@@ -93,15 +104,13 @@
         android:id="@+id/textIP"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
         android:background="@color/colorAccent"
         android:fontFamily="@font/englebert"
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView5"
+        app:layout_constraintStart_toStartOf="@+id/textStatus"
         app:layout_constraintTop_toBottomOf="@+id/textStatus" />
 
     <TextView
@@ -109,7 +118,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="IP:"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -119,7 +128,7 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/englebert"
         android:text="Dados do Servidor"
         android:textColor="@color/colorPrimaryDark"
@@ -129,10 +138,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btLigarServer"
+        android:id="@+id/btConectaServer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:background="@color/colorbackground"
         android:onClick="ligarServidor"
         android:text="CONECTAR"
@@ -141,74 +150,75 @@
         app:layout_constraintTop_toBottomOf="@+id/textIP" />
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
-        android:layout_width="220dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:textColorHint="@color/colorPrimaryDark"
-        app:boxBackgroundColor="@color/colorPrimaryDark"
-        app:boxBackgroundMode="outline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btLigarServer">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtCepServ"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Digite o CEP do oponente"
-            android:inputType="numberSigned" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-
     <TextView
         android:id="@+id/textCidade2"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/colorAccent"
+        android:text="Desconhecida"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView15"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/tvCep2" />
 
     <TextView
         android:id="@+id/textEnd"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="48dp"
+        android:background="@color/colorAccent"
+        android:text="Desconhecido"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.464"
-        app:layout_constraintStart_toEndOf="@+id/textView14"
+        app:layout_constraintStart_toStartOf="@+id/textCidade2"
         app:layout_constraintTop_toBottomOf="@+id/textCidade2" />
 
-    <Button
-        android:id="@+id/btVerif"
+
+    <EditText
+        android:id="@+id/edtCepInicio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:width="100dp"
+        android:background="@color/cardview_light_background"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="3"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.38"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btJogar1" />
+
+    <TextView
+        android:id="@+id/tvCepFim"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:onClick="validaCep"
-        android:text="Verificar CEP e JOGAR"
+        android:text="XXXXX"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textEnd" />
+        app:layout_constraintHorizontal_bias="0.11"
+        app:layout_constraintStart_toEndOf="@+id/edtCepInicio"
+        app:layout_constraintTop_toBottomOf="@+id/btJogar1" />
 
     <TextView
         android:id="@+id/textStatus1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
-        android:text="Desconhacido"
+        android:text="Sem informacoes"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.462"
         app:layout_constraintStart_toEndOf="@+id/textView16"
-        app:layout_constraintTop_toBottomOf="@+id/btVerif" />
+        app:layout_constraintTop_toBottomOf="@+id/edtCepInicio" />
 
     <TextView
         android:id="@+id/textPont1"
@@ -229,4 +239,26 @@
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/textPont1"
         app:layout_constraintTop_toBottomOf="@+id/textPont1" />
+
+    <Button
+        android:id="@+id/btJogar1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="JOGAR"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textEnd" />
+
+    <TextView
+        android:id="@+id/tvCep2"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorAccent"
+        android:text="Cep Servidor"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/textCidade2"
+        app:layout_constraintTop_toBottomOf="@+id/btConectaServer" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -233,6 +233,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //passar dados
         intent.putExtra("CEP",cep);
+        intent.putExtra("logradouro",logradouro);
+        intent.putExtra("localidade",cidade);
         startActivity(intent);
     }
     public void onClickClient(View v){
@@ -240,6 +242,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(getApplicationContext(),Conectar_Cliente.class);
         //passar dados
         intent.putExtra("CEP",cep);
+        intent.putExtra("logradouro",logradouro);
+        intent.putExtra("localidade",cidade);
         startActivity(intent);
     }
 

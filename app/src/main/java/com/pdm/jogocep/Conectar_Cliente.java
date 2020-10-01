@@ -7,133 +7,154 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.github.rtoshiro.util.format.SimpleMaskFormatter;
-import com.github.rtoshiro.util.format.text.MaskTextWatcher;
 import com.google.android.material.textfield.TextInputEditText;
-
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class Conectar_Cliente extends AppCompatActivity {
 
     TextView tvStatusIP, tvNumPìngsPongs;
-    ServerSocket welcomeSocket;
+    Socket clientSocket;
     DataOutputStream socketOutput;
     BufferedReader socketEntrada;
-    DataInputStream fromClient;
-    boolean continuarRodando = false;
-    private TextInputEditText CEP2;
+    DataInputStream socketInput;
     private TextInputEditText IPS;
-    Button btLigarServer;
+    Button btconecServer, btJoga;
     long pings, pongs;
     String cepMaster;
+    String cepCli, cidadeCli, logradouroCli;
     TextView ipt;
-    Boolean CepValido;
-    Button btServ,btCli;
-    String ipAddress,cep,cidade,logradouro;
-    TextView tv,end,cidade2;
-    private Handler handler = new Handler();  //permite acesso da thred para UI onde tem o Handler
+    TextView tv, end2, cidade2, cep2;
+    //private Handler handler = new Handler();  //permite acesso da thred para UI onde tem o Handler
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conectar__cliente);
 
+        tvStatusIP = findViewById(R.id.textStatus1);
+        btconecServer = findViewById(R.id.btConectaServer);
+        btJoga = findViewById(R.id.btJogar2);
 
-
-
-
-
-            tvStatusIP = findViewById(R.id.textStatus1);
-            btLigarServer = findViewById(R.id.btLigarServer);
-            CEP2 = (TextInputEditText)findViewById(R.id.edtCepCli);
-            IPS = (TextInputEditText)findViewById(R.id.edtIPServer);
-            ipt = (TextView)findViewById(R.id.textIP);
-            cidade2 = (TextView)findViewById(R.id.textCidade3);
-            end = (TextView)findViewById(R.id.textEnd3);
-
-
-            //Criando máscara para o CEP
-        SimpleMaskFormatter smf = new SimpleMaskFormatter("NNNNN-NNN");
-        MaskTextWatcher mtw = new MaskTextWatcher(CEP2,smf);
-        CEP2.addTextChangedListener(mtw);
+        IPS = (TextInputEditText) findViewById(R.id.edtIPServer);
+        ipt = (TextView) findViewById(R.id.textIP);
+        cep2 = (TextView) findViewById(R.id.tvCep3);
+        cidade2 = (TextView) findViewById(R.id.textCidade3);
+        end2 = (TextView) findViewById(R.id.textEnd3);
 
         //Criando máscara para o IP
-        SimpleMaskFormatter smf2 = new SimpleMaskFormatter("NNN.NNN.NNN.NNN");
-        MaskTextWatcher mtw2 = new MaskTextWatcher(IPS,smf2);
-        IPS.addTextChangedListener(mtw2);
+       // SimpleMaskFormatter smf2 = new SimpleMaskFormatter("NNN.NNN.N.NN");
+       // MaskTextWatcher mtw2 = new MaskTextWatcher(IPS, smf2);
+       // IPS.addTextChangedListener(mtw2);
 
-            //Recuperar os dados enviados
-            Bundle dados = getIntent().getExtras();
-            cepMaster = dados.getString("CEP");
-            //Configurar valores recuperados
-            //porta.setText(cepmaster);
-            Log.v("PDM "+"CEP Master",cepMaster);
+        //Recuperar os dados enviados
+        Bundle dados = getIntent().getExtras();
+        cepCli = dados.getString("CEP");
+        cidadeCli = dados.getString("localidade");
+        logradouroCli = dados.getString("logradouro");
+
+      // Configurar valores recuperados
+       cidade2.setText(cidadeCli);
+       end2.setText(logradouroCli);
+       cep2.setText(cepCli );
+
+        Log.v("PDM " + "CEP Cliente", cepCli);
+
+        btJoga.setEnabled(false);
 
 
-        }
+    }
 
-        public void ligarServidor(View v) {
-            ConnectivityManager connManager;
-            connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+    public void atualizarStatus() {
+        //Método que vai atualizar os pings e pongs, usando post para evitar problemas com as threads
+        tvNumPìngsPongs.post(new Runnable() {
+            @Override
+            public void run() {
+             tvNumPìngsPongs.setText("Enviados " + pings + " Pings e " + pongs + " Pongs");
+            }
+        });
+    }
 
-            Network[] networks = connManager.getAllNetworks();
-
-
-            for (Network minhaRede : networks) {
-                NetworkInfo netInfo = connManager.getNetworkInfo(minhaRede);
-                if (netInfo.getState().equals(NetworkInfo.State.CONNECTED)) {
-                    NetworkCapabilities propDaRede = connManager.getNetworkCapabilities(minhaRede);
-
-                    if (propDaRede.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-
-                        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-
-                        String macAddress = wifiManager.getConnectionInfo().getMacAddress();
-                        Log.v("PDM", "Wifi - MAC:" + macAddress);
-
-                        int ip = wifiManager.getConnectionInfo().getIpAddress();
-                        String ipAddress = String.format("%d.%d.%d.%d", (ip & 0xff), (ip >> 8 & 0xff), (ip >> 16 & 0xff), (ip >> 24 & 0xff));
-
-                        Log.v("PDM", "Wifi - IP:" + ipAddress);
-                        tvStatusIP.setText("Ativo");
-                        ipt.setText(ipAddress);
-
-                        Thread t = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ligarServerCodigo();
-                            }
-                        });
-                        t.start();
-                    }
-
+    public void onClickConectar(View v) {
+        ConnectivityManager connManager;
+        connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network[] networks = connManager.getAllNetworks();
+        for (Network minhaRede : networks) {
+            NetworkInfo netInfo = connManager.getNetworkInfo(minhaRede);
+            if (netInfo.getState().equals(NetworkInfo.State.CONNECTED)) {
+                NetworkCapabilities propDaRede = connManager.getNetworkCapabilities(minhaRede);
+                if (propDaRede.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Thread t = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            conectarCodigo();
+                        }
+                    });
+                    t.start();
                 }
-
             }
         }
+    }
+           public void conectarCodigo (){
+            final String ip = IPS.getText().toString();
+            tvStatusIP.setText("Conectando em " + ip + ":9090");
 
 
-        public void mandarPing(View v) {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        clientSocket = new Socket(ip, 9090);
+
+                        tvStatusIP.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvStatusIP.setText("Conectado com " + ip + ":9090");
+                            }
+                        });
+                        socketOutput =
+                                new DataOutputStream(clientSocket.getOutputStream());
+                        socketInput =
+                                new DataInputStream(clientSocket.getInputStream());
+                        while (socketInput != null) {
+                            String result = socketInput.readUTF();
+                            if (result.compareTo("PING") == 0) {
+                                //enviar Pong
+                                pongs++;
+                                socketOutput.writeUTF("PONG");
+                                socketOutput.flush();
+                                atualizarStatus();
+                            }
+                        }
+
+
+                    } catch (Exception e) {
+
+                        tvStatusIP.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvStatusIP.setText("Erro na conexão com " + ip + ":9090");
+                            }
+                        });
+
+                        e.printStackTrace();
+                    }
+                }
+            });
+            t.start();
+        }
+
+        public void mandarPing (View v) {
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -145,7 +166,7 @@ public class Conectar_Cliente extends AppCompatActivity {
                             atualizarStatus();
                         } else {
                             tvStatusIP.setText("Cliente Desconectado");
-                            btLigarServer.setEnabled(true);
+                            btconecServer.setEnabled(true);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -155,192 +176,12 @@ public class Conectar_Cliente extends AppCompatActivity {
             t.start();
 
         }
+            public void somarNumPongs () {
+                pongs++;
+                atualizarStatus();
 
-        public void desconectar (View view) {
-            try {
-                if (socketOutput != null) {
-                    socketOutput.close();
-                }
-                //Habilitar o Botão de Ligar
-                btLigarServer.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        btLigarServer.setEnabled(true);
-                    }
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
+
             }
-
-        }
-
-        public void ligarServerCodigo () {
-            //Desabilitar o Botão de Ligar
-            btLigarServer.post(new Runnable() {
-                @Override
-                public void run() {
-                    btLigarServer.setEnabled(false);
-                }
-            });
-
-            String result = "";
-            try {
-                Log.v("SMD", "Ligando o Server");
-                welcomeSocket = new ServerSocket(9090);
-                Socket connectionSocket = welcomeSocket.accept();
-                Log.v("SMD", "Nova conexão");
-
-                //Instanciando os canais de stream
-                fromClient = new DataInputStream(connectionSocket.getInputStream());
-                socketOutput = new DataOutputStream(connectionSocket.getOutputStream());
-                continuarRodando = true;
-                while (continuarRodando) {
-                    result = fromClient.readUTF();
-                    if (result.compareTo("PING") == 0) {
-                        //enviar Pong
-                        pongs++;
-                        socketOutput.writeUTF("PONG");
-                        socketOutput.flush();
-                        atualizarStatus();
-                    }
-                }
-
-                Log.v("SMD", result);
-                //Enviando dados para o servidor
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        public void somarNumPongs () {
-            pongs++;
-            atualizarStatus();
-
-        }
-
-        public void atualizarStatus () {
-            //Método que vai atualizar os pings e pongs, usando post para evitar problemas com as threads
-            tvNumPìngsPongs.post(new Runnable() {
-                @Override
-                public void run() {
-                    tvNumPìngsPongs.setText("Enviados " + pings + " Pings e " + pongs + " Pongs");
-                }
-            });
-        }
-
-        public void validaCep(View view){
-
-            ConnectivityManager connManager;
-            connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            Network[] networks = connManager.getAllNetworks();
-            for(Network minhaRede:networks){
-                NetworkInfo netInfo = connManager.getNetworkInfo(minhaRede);
-
-                if(netInfo.getState().equals(NetworkInfo.State.CONNECTED)){
-
-                    NetworkCapabilities propRede = connManager.getNetworkCapabilities(minhaRede);
-
-                    if(propRede.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)){
-                        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
-                        int ip =wifiManager.getConnectionInfo().getIpAddress();
-                        ipAddress = String.format("%d.%d.%d.%d", (ip & 0xff), (ip >> 8 & 0xff), (ip >> 16 & 0xff), (ip >> 24 & 0xff));
-
-                    }
-                }
-            }
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    testeDeHttp();
-                }
-            });
-            t.start();
-        }
-
-        private void testeDeHttp() {
-            try {
-                cep = CEP2.getText().toString();
-                URL url = new URL("https://viacep.com.br/ws/"+cep+"/json/");
-                HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                conn.connect();
-
-                int resposta = conn.getResponseCode();
-
-                if(resposta == HttpsURLConnection.HTTP_OK){
-                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(),"UTF-8"));
-                    StringBuilder response = new StringBuilder();
-                    String line =null;
-                    while ((line = br.readLine())!=null){
-                        response.append(line.trim());
-
-                    }
-                    JSONObject resultado = new JSONObject(response.toString());
-                    logradouro = resultado.getString("logradouro");
-                    cidade = resultado.getString("localidade");
-
-                    Log.v("PDM", "Localidade: "+cidade);
-                /*t.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        t.setText("Seu ip para criar servidor é esse: "+ipAddress+" :9090");
-                    }
-                });*/
-                    CepValido = true;
-
-                    handler.post(new Runnable() {// semelhante a runOnUiThready
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(),"CEP do Oponente Válido",Toast.LENGTH_LONG).show();
-                            tv.setText(cidade);
-                            end.setText(logradouro);
-                        }
-                    });
-
-
-
-
-                }else{
-               /* t.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        t.setText("Cep invalido");
-                    }
-                });*/
-
-                    Log.v("PDM", "CEP inválido");
-                    CepValido = false;
-
-                    handler.post(new Runnable() {// semelhante a runOnUiThready
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(),"Digite um CEP valido e verifique",Toast.LENGTH_SHORT).show();
-                            tv.setText("");
-                        }
-                    });
-
-                    //Desabilitar  Botões de iniciar
-                    btServ.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            btServ.setEnabled(false);
-                        }
-                    });
-                    btCli.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            btCli.setEnabled(false);
-                        }
-                    });
-
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
 
     }
+
