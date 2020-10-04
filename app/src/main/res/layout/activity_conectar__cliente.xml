@@ -127,7 +127,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="@color/colorbackground"
         android:onClick="onClickConectar"
         android:text="CONECTAR CLIENTE"
         app:layout_constraintEnd_toEndOf="parent"
@@ -141,6 +140,9 @@
         android:layout_width="220dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:background="@color/colorPrimaryDark"
+        android:backgroundTint="@color/colorAccent"
+        android:backgroundTintMode="add"
         android:textColorHint="@color/colorPrimaryDark"
         app:boxBackgroundColor="@color/colorPrimaryDark"
         app:boxBackgroundMode="outline"
@@ -152,7 +154,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Digite o IP do Servidor"
-            android:inputType="text"
+            android:inputType="textPersonName"
             android:textSize="18sp" />
     </com.google.android.material.textfield.TextInputLayout>
 

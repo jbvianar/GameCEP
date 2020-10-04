@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.pdm.jogocep.model.Jogador;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -23,7 +24,7 @@ import java.net.Socket;
 
 public class Conectar_Cliente extends AppCompatActivity {
 
-    TextView tvStatusIP, tvNumPìngsPongs;
+    TextView tvStatus, tvNumPìngsPongs;
     Socket clientSocket;
     DataOutputStream socketOutput;
     BufferedReader socketEntrada;
@@ -31,10 +32,13 @@ public class Conectar_Cliente extends AppCompatActivity {
     private TextInputEditText IPS;
     Button btconecServer, btJoga;
     long pings, pongs;
-    String cepMaster;
+    TextView cepfim;
+    TextView cepinicio;
     String cepCli, cidadeCli, logradouroCli;
     TextView ipt;
     TextView tv, end2, cidade2, cep2;
+    Jogador jogCliente;
+
     //private Handler handler = new Handler();  //permite acesso da thred para UI onde tem o Handler
 
     @Override
@@ -42,15 +46,17 @@ public class Conectar_Cliente extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conectar__cliente);
 
-        tvStatusIP = findViewById(R.id.textStatus1);
+        tvStatus = findViewById(R.id.textStatus1);
         btconecServer = findViewById(R.id.btConectaServer);
         btJoga = findViewById(R.id.btJogar2);
 
         IPS = (TextInputEditText) findViewById(R.id.edtIPServer);
-        ipt = (TextView) findViewById(R.id.textIP);
+
         cep2 = (TextView) findViewById(R.id.tvCep3);
         cidade2 = (TextView) findViewById(R.id.textCidade3);
         end2 = (TextView) findViewById(R.id.textEnd3);
+      cepinicio = (TextView) findViewById(R.id.edtCepInicio2);
+        cepfim = (TextView) findViewById(R.id.tvCepFim);
 
         //Criando máscara para o IP
        // SimpleMaskFormatter smf2 = new SimpleMaskFormatter("NNN.NNN.N.NN");
@@ -67,6 +73,8 @@ public class Conectar_Cliente extends AppCompatActivity {
        cidade2.setText(cidadeCli);
        end2.setText(logradouroCli);
        cep2.setText(cepCli );
+        jogCliente = new Jogador();
+        jogCliente.setCEPCliente(cepCli);
 
         Log.v("PDM " + "CEP Cliente", cepCli);
 
@@ -85,7 +93,7 @@ public class Conectar_Cliente extends AppCompatActivity {
         });
     }
 
-    public void onClickConectar(View v) {
+    /*public void onClickConectar(View v) {
         ConnectivityManager connManager;
         connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         Network[] networks = connManager.getAllNetworks();
@@ -104,46 +112,80 @@ public class Conectar_Cliente extends AppCompatActivity {
                 }
             }
         }
-    }
-           public void conectarCodigo (){
+    }*/
+           public void onClickConectar (View v){
             final String ip = IPS.getText().toString();
-            tvStatusIP.setText("Conectando em " + ip + ":9090");
+            tvStatus.setText("Conectando em "+ ip);
+               //tvStatus.post(new Runnable() {
+              //     @Override
+               //    public void run() {
+                //       tvStatus.setText("Conectando em " + ip );
+               //    }
+              // });
+               //String CEPServidor = "";
+               //String result = "";
+               Thread t = new Thread(new Runnable() {
+                   @Override
+                   public void run() {
+               try {
+                   clientSocket = new Socket(ip, 9090);
+                   Log.v("PDM " , "Conectado "+ ip);
 
+                   tvStatus.post(new Runnable() {
+                       @Override
+                       public void run() {
+                           tvStatus.setText("Conectado com " + ip );
+                           btJoga.setEnabled(true);
+                          // btconecServer.setEnabled(false);
+                       }
+                   });
+                   jogCliente.setPorta(9090);
+                   socketOutput =
+                           new DataOutputStream(clientSocket.getOutputStream()); //Envia dados
+                   socketInput =
+                           new DataInputStream(clientSocket.getInputStream());// Recebe dados
 
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        clientSocket = new Socket(ip, 9090);
+                   while (socketInput != null) {
+                       String result = socketInput.readUTF();
+                       Log.v("PDM", "Result " + result);
+                       String CEPServidor = "";
+                       //if (jogCliente.getCEPServer() == null) {
 
-                        tvStatusIP.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                tvStatusIP.setText("Conectado com " + ip + ":9090");
-                            }
-                        });
-                        socketOutput =
-                                new DataOutputStream(clientSocket.getOutputStream());
-                        socketInput =
-                                new DataInputStream(clientSocket.getInputStream());
-                        while (socketInput != null) {
-                            String result = socketInput.readUTF();
-                            if (result.compareTo("PING") == 0) {
+                       if (result.compareTo("CEPServ") == 0) {
+                           CEPServidor = result;
+                           Log.v("PDM", "CEPServidor " + CEPServidor);
+                           socketOutput.writeUTF("CEPCli");
+                           socketOutput.flush();
+                           atualizarStatus();
+                       }
+
+                       if (CEPServidor != null) {
+                           jogCliente.setCEPServer(CEPServidor);
+                           cepfim.setText(CEPServidor.substring(3));
+                       }
+
+                       if (jogCliente.getCEPCliente() != null && jogCliente.getCEPServer() != null) {
+                           Log.v("PDM", "Abrindo jogo");
+
+                                    /*if (result.compareTo("PING") == 0) {
                                 //enviar Pong
                                 pongs++;
                                 socketOutput.writeUTF("PONG");
                                 socketOutput.flush();
                                 atualizarStatus();
-                            }
-                        }
+                            }*/
+                       }
+                   }
+
 
 
                     } catch (Exception e) {
 
-                        tvStatusIP.post(new Runnable() {
+                        tvStatus.post(new Runnable() {
                             @Override
                             public void run() {
-                                tvStatusIP.setText("Erro na conexão com " + ip + ":9090");
+                                tvStatus.setText("Erro na conexão com " + ip );
+                                btJoga.setEnabled(false);
                             }
                         });
 
@@ -153,6 +195,7 @@ public class Conectar_Cliente extends AppCompatActivity {
             });
             t.start();
         }
+
 
         public void mandarPing (View v) {
             Thread t = new Thread(new Runnable() {
@@ -165,7 +208,7 @@ public class Conectar_Cliente extends AppCompatActivity {
                             pings++;
                             atualizarStatus();
                         } else {
-                            tvStatusIP.setText("Cliente Desconectado");
+                            tvStatus.setText("Cliente Desconectado");
                             btconecServer.setEnabled(true);
                         }
                     } catch (IOException e) {
@@ -184,4 +227,5 @@ public class Conectar_Cliente extends AppCompatActivity {
             }
 
     }
+
 

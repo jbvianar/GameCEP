@@ -49,7 +49,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextInputEditText CEP;
     Boolean CepValido;
     Button btServ,btCli;
-    String ipAddress,cep, logradouro,cidade;
+    String ipAddress,cepcli, logradourocli,cidadecli;
+    String cepserv, logradouroserv,cidadeserv;
+    String cep, logradouro,cidade;
     TextView tv;
     private Handler handler = new Handler();  //permite acesso da thred para UI onde tem o Handler
 
@@ -229,12 +231,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClickServer(View v){
 
+        Log.v("PDM", "CEP Server "+ cep);
+        Log.v("PDM", "logradouro "+ logradouro);
+        Log.v("PDM", "localidad "+ cidade);
+
         Intent intent = new Intent(getApplicationContext(),ConectarServidor.class);
 
         //passar dados
+
         intent.putExtra("CEP",cep);
         intent.putExtra("logradouro",logradouro);
         intent.putExtra("localidade",cidade);
+
+
         startActivity(intent);
     }
     public void onClickClient(View v){

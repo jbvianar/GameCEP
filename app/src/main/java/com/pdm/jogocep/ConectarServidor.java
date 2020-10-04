@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.pdm.jogocep.model.Jogador;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -24,26 +26,29 @@ import java.net.Socket;
 
 public class ConectarServidor extends AppCompatActivity {
 
-    TextView tvStatus, tvNumPìngsPongs;
+    TextView tvStatus, textPointS, textTentS,textStatusJogo,tvNumPìngsPongs;
     ServerSocket welcomeSocket;
     DataOutputStream socketOutput;
     BufferedReader socketEntrada;
     DataInputStream fromClient;
     boolean continuarRodando = false;
     Button btLigarServer,btJoga;
-    long pings, pongs;
-    String cepServ,cidadeServ,logradouroServ;
+    long ponts, tentativ;
+    Jogador jogServidor;
+    String cepserv,cidadeserv,logradouroserv;
+
     TextView ipt;
-    Boolean CepValido;
-    String ipAddress,cep, logradouro,cidade;
-    TextView tv,end,cep2;
+    TextView tv;
+    TextView end;
+    TextView cep2;
+    TextView cepini;
+    TextView cepfim;
     private Handler handler = new Handler();  //permite acesso da thred para UI onde tem o Handler
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conectar_servidor);
-
 
         tvStatus = findViewById(R.id.textStatus);
         btLigarServer = findViewById(R.id.btConectaServer);
@@ -52,23 +57,29 @@ public class ConectarServidor extends AppCompatActivity {
         ipt = (TextView)findViewById(R.id.textIP);
         tv = (TextView)findViewById(R.id.textCidade2);
         end = (TextView)findViewById(R.id.textEnd);
-
-
-
+        cepini=(TextView)findViewById(R.id.edtCepInicio);
+        cepfim=(TextView)findViewById(R.id.tvCepFim);
+        textStatusJogo=(TextView)findViewById(R.id.textStatus1);
+        textPointS=(TextView)findViewById(R.id.textPont1);
+        textTentS=(TextView)findViewById(R.id.textTenta1);
 
         //Recuperar os dados enviados
         Bundle dados = getIntent().getExtras();
-        cepServ = dados.getString("CEP");
-        cidadeServ = dados.getString("localidade");
-        logradouroServ = dados.getString("logradouro");
+        cepserv = dados.getString("CEP");
+        cidadeserv = dados.getString("localidade");
+        logradouroserv = dados.getString("logradouro");
         //Configurar valores recuperados
-        tv.setText(cidadeServ);
-        end.setText(logradouroServ);
-        cep2.setText(cepServ);
+        tv.setText(cidadeserv);
+        end.setText(logradouroserv);
+        cep2.setText(cepserv);
+        jogServidor = new Jogador();
+      jogServidor.setCEPServer(cepserv);
 
-        Log.v("PDM "+"CEP Master",cepServ);
+        Log.v("PDM ","CEP Server"+jogServidor.getCEPServer());
+        Log.v("PDM ","CEP Server"+ cepserv);
 
         btJoga.setEnabled(false);
+
 
 
     }
@@ -114,15 +125,15 @@ public class ConectarServidor extends AppCompatActivity {
     }
 
 
-    public void mandarPing(View v) {
+    public void mandarCep(View v) {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     if (socketOutput != null) {
-                        socketOutput.writeUTF("PING");
+                        socketOutput.writeUTF("cepserv");
                         socketOutput.flush();
-                        pings++;
+                        //pings++;
                         atualizarStatus();
                     } else {
                         tvStatus.setText("Cliente Desconectado");
@@ -164,13 +175,15 @@ public class ConectarServidor extends AppCompatActivity {
                     btJoga.setEnabled(true);
                 }
             });
-
+            String CEPCliente = "";
             String result = "";
             try {
-                Log.v("SMD", "Ligando o Server");
+                Log.v("PDM", "Ligando o Server");
                 welcomeSocket = new ServerSocket(9090);
                 Socket connectionSocket = welcomeSocket.accept();
-                Log.v("SMD", "Nova conexão");
+                Log.v("PDM", "Nova conexão");
+                atualizarStatus();
+
 
                 //Instanciando os canais de stream
                 fromClient = new DataInputStream(connectionSocket.getInputStream());
@@ -178,24 +191,41 @@ public class ConectarServidor extends AppCompatActivity {
                 continuarRodando = true;
                 while (continuarRodando) {
                     result = fromClient.readUTF();
+                    Log.v("PDM", "readUTF Result = " + result);
+                    CEPCliente = result;
+                    if (CEPCliente == null) {
+                        result = fromClient.readUTF();
+                        Log.v("PDM", "readUTF Result = " + result);
+                        if (result.compareTo("") != 0) {
+                            CEPCliente = result;
+                        }
+                        if (CEPCliente != null) {
+                            cepfim.setText(CEPCliente.substring(3));
+                        }
+                    }
+
+
+                    Log.v("PDM", "readUTF Result = " + result);
+
+                    //result = fromClient.readUTF();
                     if (result.compareTo("PING") == 0) {
                         //enviar Pong
-                        pongs++;
-                        socketOutput.writeUTF("PONG");
+                        //pongs++;
+                        socketOutput.writeUTF("CEPServ");
                         socketOutput.flush();
                         atualizarStatus();
                     }
                 }
 
-                Log.v("SMD", result);
+                Log.v("PDM", result);
                 //Enviando dados para o servidor
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
-        public void somarNumPongs () {
-            pongs++;
+        public void somarNumPontos () {
+            ponts++;
             atualizarStatus();
 
         }
@@ -205,7 +235,7 @@ public class ConectarServidor extends AppCompatActivity {
             tvNumPìngsPongs.post(new Runnable() {
                 @Override
                 public void run() {
-                    tvNumPìngsPongs.setText("Enviados " + pings + " Pings e " + pongs + " Pongs");
+                   // tvNumPìngsPongs.setText("Enviados " + pings + " Pings e " + pongs + " Pongs");
                 }
             });
         }
