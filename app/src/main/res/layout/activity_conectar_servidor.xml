@@ -71,7 +71,7 @@
         android:text="Status:"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtCepInicio" />
+        app:layout_constraintTop_toBottomOf="@+id/btJogar1" />
 
     <TextView
         android:id="@+id/textStatus"
@@ -192,19 +192,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.38"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btJogar1" />
+        app:layout_constraintTop_toBottomOf="@+id/textEnd" />
 
     <TextView
         android:id="@+id/tvCepFim"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="XXXXX"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.11"
         app:layout_constraintStart_toEndOf="@+id/edtCepInicio"
-        app:layout_constraintTop_toBottomOf="@+id/btJogar1" />
+        app:layout_constraintTop_toBottomOf="@+id/textEnd" />
 
     <TextView
         android:id="@+id/textStatus1"
@@ -216,9 +216,9 @@
         android:text="Sem informacoes"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.462"
+        app:layout_constraintHorizontal_bias="0.419"
         app:layout_constraintStart_toEndOf="@+id/textView16"
-        app:layout_constraintTop_toBottomOf="@+id/edtCepInicio" />
+        app:layout_constraintTop_toBottomOf="@+id/btJogar1" />
 
     <TextView
         android:id="@+id/textPont1"
@@ -227,7 +227,9 @@
         android:layout_marginTop="16dp"
         android:text="0"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/textStatus1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.12"
+        app:layout_constraintStart_toEndOf="@+id/textView17"
         app:layout_constraintTop_toBottomOf="@+id/textStatus1" />
 
     <TextView
@@ -244,12 +246,13 @@
         android:id="@+id/btJogar1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="JOGAR"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textEnd" />
+        app:layout_constraintTop_toBottomOf="@+id/edtCepInicio" />
 
     <TextView
         android:id="@+id/tvCep2"

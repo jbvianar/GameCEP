@@ -65,11 +65,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="52dp"
-        android:layout_marginTop="8dp"
         android:text="Status:"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtCepInicio2" />
+        app:layout_constraintTop_toBottomOf="@+id/btJogar2" />
+
+    <EditText
+        android:id="@+id/edtCepInicio2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:width="100dp"
+        android:background="@color/cardview_light_background"
+        android:ems="10"
+        android:inputType="number"
+        android:maxLength="3"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.379"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textEnd3" />
 
     <TextView
         android:id="@+id/textStatus1"
@@ -186,24 +203,6 @@
         app:layout_constraintTop_toBottomOf="@+id/textCidade3" />
 
 
-    <EditText
-        android:id="@+id/edtCepInicio2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:width="100dp"
-        android:background="@color/cardview_light_background"
-        android:ems="10"
-        android:inputType="number"
-        android:maxLength="3"
-        android:textAlignment="center"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.38"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btJogar2" />
-
     <TextView
         android:id="@+id/tvCepFim2"
         android:layout_width="wrap_content"
@@ -215,14 +214,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toEndOf="@+id/edtCepInicio2"
-        app:layout_constraintTop_toBottomOf="@+id/btJogar2" />
+        app:layout_constraintTop_toBottomOf="@+id/textEnd3" />
 
     <TextView
         android:id="@+id/textStatus2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="92dp"
         android:text="Sem informacoes"
         android:textColor="@color/colorPrimaryDark"
@@ -230,7 +228,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.462"
         app:layout_constraintStart_toEndOf="@+id/textView16"
-        app:layout_constraintTop_toBottomOf="@+id/edtCepInicio2" />
+        app:layout_constraintTop_toBottomOf="@+id/btJogar2" />
 
     <TextView
         android:id="@+id/textTenta2"
@@ -240,8 +238,8 @@
         android:text="0"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@+id/textPont2"
-        tools:layout_editor_absoluteX="178dp" />
+        app:layout_constraintStart_toStartOf="@+id/textPont2"
+        app:layout_constraintTop_toBottomOf="@+id/textPont2" />
 
     <TextView
         android:id="@+id/textPont2"
@@ -251,19 +249,21 @@
         android:text="0"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/textStatus2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toEndOf="@+id/textView27"
         app:layout_constraintTop_toBottomOf="@+id/textStatus2" />
 
     <Button
         android:id="@+id/btJogar2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="JOGAR"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textEnd3" />
+        app:layout_constraintTop_toBottomOf="@+id/edtCepInicio2" />
 
     <TextView
         android:id="@+id/tvCep3"

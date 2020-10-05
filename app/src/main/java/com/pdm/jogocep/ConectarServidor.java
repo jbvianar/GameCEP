@@ -26,7 +26,7 @@ import java.net.Socket;
 
 public class ConectarServidor extends AppCompatActivity {
 
-    TextView tvStatus, textPointS, textTentS,textStatusJogo,tvNumPìngsPongs;
+    TextView tvStatus, textPointS, textTentS,textStatusJogo1,tvNumPìngsPongs;
     ServerSocket welcomeSocket;
     DataOutputStream socketOutput;
     BufferedReader socketEntrada;
@@ -59,7 +59,7 @@ public class ConectarServidor extends AppCompatActivity {
         end = (TextView)findViewById(R.id.textEnd);
         cepini=(TextView)findViewById(R.id.edtCepInicio);
         cepfim=(TextView)findViewById(R.id.tvCepFim);
-        textStatusJogo=(TextView)findViewById(R.id.textStatus1);
+        textStatusJogo1=(TextView)findViewById(R.id.textStatus1);
         textPointS=(TextView)findViewById(R.id.textPont1);
         textTentS=(TextView)findViewById(R.id.textTenta1);
 
@@ -68,12 +68,13 @@ public class ConectarServidor extends AppCompatActivity {
         cepserv = dados.getString("CEP");
         cidadeserv = dados.getString("localidade");
         logradouroserv = dados.getString("logradouro");
+        Log.v("PDM", "CEP: " + cepserv + ", Cidade: "+ cidadeserv + ", Logradouro: " + logradouroserv);
         //Configurar valores recuperados
         tv.setText(cidadeserv);
         end.setText(logradouroserv);
         cep2.setText(cepserv);
         jogServidor = new Jogador();
-      jogServidor.setCEPServer(cepserv);
+        jogServidor.setCEPServer(cepserv);
 
         Log.v("PDM ","CEP Server"+jogServidor.getCEPServer());
         Log.v("PDM ","CEP Server"+ cepserv);
@@ -125,121 +126,86 @@ public class ConectarServidor extends AppCompatActivity {
     }
 
 
-    public void mandarCep(View v) {
-        Thread t = new Thread(new Runnable() {
+
+    public void ligarServerCodigo () {
+        //Desabilitar o Botão de Ligar
+        btLigarServer.post(new Runnable() {
             @Override
             public void run() {
-                try {
-                    if (socketOutput != null) {
-                        socketOutput.writeUTF("cepserv");
-                        socketOutput.flush();
-                        //pings++;
-                        atualizarStatus();
-                    } else {
-                        tvStatus.setText("Cliente Desconectado");
-                        btLigarServer.setEnabled(true);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                btLigarServer.setEnabled(false);
+
+
             }
         });
-        t.start();
-
-    }
-
-        public void desconectar (View view) {
-            try {
-                if (socketOutput != null) {
-                    socketOutput.close();
-                }
-                //Habilitar o Botão de Ligar
-                btLigarServer.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        btLigarServer.setEnabled(true);
-                    }
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        public void ligarServerCodigo () {
-            //Desabilitar o Botão de Ligar
-            btLigarServer.post(new Runnable() {
-                @Override
-                public void run() {
-                    btLigarServer.setEnabled(false);
-                    btJoga.setEnabled(true);
-                }
-            });
-            String CEPCliente = "";
-            String result = "";
-            try {
-                Log.v("PDM", "Ligando o Server");
-                welcomeSocket = new ServerSocket(9090);
-                Socket connectionSocket = welcomeSocket.accept();
-                Log.v("PDM", "Nova conexão");
-                atualizarStatus();
+        String CEPCliente = "";
+        String result = "";
+        try {
+            Log.v("PDM", "Ligando o Server");
+            welcomeSocket = new ServerSocket(9090);
+            Socket connectionSocket = welcomeSocket.accept();
+            Log.v("PDM", "Nova conexão");
+            //atualizarStatus();
 
 
-                //Instanciando os canais de stream
-                fromClient = new DataInputStream(connectionSocket.getInputStream());
-                socketOutput = new DataOutputStream(connectionSocket.getOutputStream());
-                continuarRodando = true;
-                while (continuarRodando) {
-                    result = fromClient.readUTF();
-                    Log.v("PDM", "readUTF Result = " + result);
+            //Instanciando os canais de stream
+            fromClient = new DataInputStream(connectionSocket.getInputStream());
+            socketOutput = new DataOutputStream(connectionSocket.getOutputStream());
+            continuarRodando = true;
+
+            socketOutput.writeUTF(cepserv);
+            socketOutput.flush();
+            Log.v("PDM", "Enviou CEP "+ cepserv);
+
+            if (CEPCliente.compareTo("") == 0) {
+                Log.v("PDM", "Antes de ler");
+                result = fromClient.readUTF();
+                Log.v("PDM", "readUTF Result = " + result);
+                if (result.compareTo("") != 0) {
                     CEPCliente = result;
-                    if (CEPCliente == null) {
-                        result = fromClient.readUTF();
-                        Log.v("PDM", "readUTF Result = " + result);
-                        if (result.compareTo("") != 0) {
-                            CEPCliente = result;
-                        }
-                        if (CEPCliente != null) {
-                            cepfim.setText(CEPCliente.substring(3));
-                        }
-                    }
-
-
-                    Log.v("PDM", "readUTF Result = " + result);
-
-                    //result = fromClient.readUTF();
-                    if (result.compareTo("PING") == 0) {
-                        //enviar Pong
-                        //pongs++;
-                        socketOutput.writeUTF("CEPServ");
-                        socketOutput.flush();
-                        atualizarStatus();
-                    }
                 }
-
-                Log.v("PDM", result);
-                //Enviando dados para o servidor
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                if (CEPCliente.compareTo("") != 0) {
+                    jogServidor.setCEPCliente(CEPCliente);
+                    final String finaldocep = CEPCliente.substring(3);
+                    cepfim.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            cepfim.setText(finaldocep);
+                            textStatusJogo1.setText("Digite os 3 digitos do CEP");
+                            if (cepini.getText() != ""){
+                                btJoga.setEnabled(true);
+                            }
+                        }
+                    });
+                }
             }
+
+
+            Log.v("PDM", "readUTF Result = " + result);
+
+
+            Log.v("PDM", result);
+            //Enviando dados para o servidor
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+    }
 
-        public void somarNumPontos () {
-            ponts++;
-            atualizarStatus();
-
-        }
-
-        public void atualizarStatus () {
-            //Método que vai atualizar os pings e pongs, usando post para evitar problemas com as threads
-            tvNumPìngsPongs.post(new Runnable() {
-                @Override
-                public void run() {
-                   // tvNumPìngsPongs.setText("Enviados " + pings + " Pings e " + pongs + " Pongs");
-                }
-            });
-        }
-
-
+    public void somarNumPontos () {
+        ponts++;
+        atualizarStatus();
 
     }
+
+    public void atualizarStatus () {
+
+        tvNumPìngsPongs.post(new Runnable() {
+            @Override
+            public void run() {
+                // tvNumPìngsPongs.setText("Enviados " + pings + " Pings e " + pongs + " Pongs");
+            }
+        });
+    }
+
+
+
+}
