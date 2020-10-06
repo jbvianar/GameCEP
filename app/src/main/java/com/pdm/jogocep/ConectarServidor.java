@@ -13,16 +13,23 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.pdm.jogocep.model.Jogador;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class ConectarServidor extends AppCompatActivity {
 
@@ -33,17 +40,19 @@ public class ConectarServidor extends AppCompatActivity {
     DataInputStream fromClient;
     boolean continuarRodando = false;
     Button btLigarServer,btJoga;
-    long ponts, tentativ;
+    TextView getTextPointS, getTextTentS;
     Jogador jogServidor;
-    String cepserv,cidadeserv,logradouroserv;
-
+    String cepserv,cidadeserv,logradouroserv,cepcli,cepend;
+    int numInsert,numReal;
+    int pts=0;
+    int tents=0;
     TextView ipt;
     TextView tv;
     TextView end;
     TextView cep2;
-    TextView cepini;
+    EditText cepini;
     TextView cepfim;
-    private Handler handler = new Handler();  //permite acesso da thred para UI onde tem o Handler
+    //private Handler handler = new Handler();  //permite acesso da thred para UI onde tem o Handler
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +66,7 @@ public class ConectarServidor extends AppCompatActivity {
         ipt = (TextView)findViewById(R.id.textIP);
         tv = (TextView)findViewById(R.id.textCidade2);
         end = (TextView)findViewById(R.id.textEnd);
-        cepini=(TextView)findViewById(R.id.edtCepInicio);
+        cepini=(EditText)findViewById(R.id.edtCepInicio);
         cepfim=(TextView)findViewById(R.id.tvCepFim);
         textStatusJogo1=(TextView)findViewById(R.id.textStatus1);
         textPointS=(TextView)findViewById(R.id.textPont1);
@@ -75,7 +84,9 @@ public class ConectarServidor extends AppCompatActivity {
         cep2.setText(cepserv);
         jogServidor = new Jogador();
         jogServidor.setCEPServer(cepserv);
+        cepcli=jogServidor.getCEPServer().substring(0,3);
 
+       numReal = Integer.parseInt(cepcli);
         Log.v("PDM ","CEP Server"+jogServidor.getCEPServer());
         Log.v("PDM ","CEP Server"+ cepserv);
 
@@ -159,6 +170,7 @@ public class ConectarServidor extends AppCompatActivity {
             if (CEPCliente.compareTo("") == 0) {
                 Log.v("PDM", "Antes de ler");
                 result = fromClient.readUTF();
+                jogServidor.setCEPCliente(result);
                 Log.v("PDM", "readUTF Result = " + result);
                 if (result.compareTo("") != 0) {
                     CEPCliente = result;
@@ -170,10 +182,11 @@ public class ConectarServidor extends AppCompatActivity {
                         @Override
                         public void run() {
                             cepfim.setText(finaldocep);
-                            textStatusJogo1.setText("Digite os 3 digitos do CEP");
-                            if (cepini.getText() != ""){
-                                btJoga.setEnabled(true);
-                            }
+                            cepend=finaldocep;
+                           textStatusJogo1.setText("Digite os 3 digitos do CEP");
+                            if (cepini.getText().toString() != ""){
+                               btJoga.setEnabled(true);
+                           }
                         }
                     });
                 }
@@ -190,22 +203,50 @@ public class ConectarServidor extends AppCompatActivity {
         }
     }
 
-    public void somarNumPontos () {
-        ponts++;
-        atualizarStatus();
 
-    }
+   // public void atualizarStatus () {
 
-    public void atualizarStatus () {
-
-        tvNumPìngsPongs.post(new Runnable() {
-            @Override
-            public void run() {
+      //  tvNumPìngsPongs.post(new Runnable() {
+     //       @Override
+      //      public void run() {
                 // tvNumPìngsPongs.setText("Enviados " + pings + " Pings e " + pongs + " Pongs");
-            }
-        });
-    }
+       //     }
+     //   });
+   //}
 
+    public void onClickJogar(View v){
+
+        String num = cepini.getText().toString();//número inserido  String
+        Log.v("PDM", "aqui0.5");
+        numInsert = Integer.parseInt(num);//número inserido em forma de int
+        //numReal = Integer.parseInt((jogServidor.getCEPCliente()));
+        Log.v("PDM", "NumReal "+jogServidor.getCEPServer() + "inserido " + numInsert);
+
+        if (numReal == numInsert){
+
+            textStatusJogo1.setText("ACERTOU!");
+
+            tents++;
+            textTentS.setText(String.valueOf(tents));
+
+        } else {
+            tents++;
+            pts = pts + (1000-Math.abs(numInsert-numReal));
+            textPointS.setText(String.valueOf(pts));
+            Log.v("PDM", "aqui2.3");
+            textTentS.setText(String.valueOf(tents));
+            Log.v("PDM", "aqui2.4");
+            if (numReal > numInsert) {
+
+                textStatusJogo1.setText("MAIOR");
+            } else {
+                Log.v("PDM", "aqui4");
+                textStatusJogo1.setText("MENOR");
+            }
+        }
+
+
+    }
 
 
 }
